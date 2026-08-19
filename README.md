@@ -7,6 +7,13 @@ A production-ready semantic color system with five appearance modes on one share
   <img alt="TEMPER overview: why it exists (readers differ; one palette fits one reader; designer-time tools stop at ship), the three reader dials (tone, color, vision) from which every other color is solved with floors and ceilings held by computation, verification of all 288 positions including color-vision simulation, and how it differs from theme lists, design-time tools, overlays, and OS toggles." src="assets/temper-overview-light.svg" width="1200">
 </picture>
 
+What it renders on a page (Light and Dark modes shown per your system theme):
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/temper-render-dark.png">
+  <img alt="A component preview styled by TEMPER: cards, buttons, form fields, a status table, badges, and callouts, all reading semantic tokens, shown in the Dark mode on dark systems and the Light mode on light ones." src="assets/temper-render-light.png" width="900">
+</picture>
+
 TEMPER stands for Tuned, Equal-Mode Palettes for Every Reader, and the name is meant literally in three senses. To temper is to hold something between extremes, which is the floors-and-ceilings principle at the heart of the solver: every color is kept above a legibility floor and below a glare cap. A temperament, in tuning, is the set of small compromises that makes every key playable on one instrument, which is what the solver does across every mode, notch, family, and vision position, so no combination is left unusable. And color temperature is the warm-to-cool axis the color families carry. A well-tempered palette, in short.
 
 The five modes are System, Light, Soft Light, Soft Dark, and Dark. They form a single luminance ladder rather than five unrelated skins, and every component reads semantic roles (surface, border, text, accent) instead of raw colors, so one attribute change restyles the page.
@@ -340,7 +347,7 @@ The one intentional use of pure white is `surface/default` in Light mode, where 
 
 ### Standards Signals
 
-A theming package should cooperate with the operating system's accessibility signals rather than override them, and this one maps onto the four that matter. `prefers-color-scheme` drives System, as described above. `color-scheme` is set per mode so native controls follow. `prefers-contrast: more` raises the deriver's text floors so text and links gain contrast in every mode (wired through the tuner, and it only ever raises a floor, so the result stays AA). And `forced-colors: active`, the Windows High Contrast case that replaces author colors with a user's chosen system palette, is handled by stepping aside: `theme.css` yields to the system colors under that media query rather than fighting them, while keeping the redundant text encoding (link underlines and status letter marks) on, since forced-colors does not restore color as a carrier of meaning. Two of these, `prefers-contrast` on the static baseline and a deeper forced-colors treatment, are places the system could go further; they are named here rather than hidden.
+A theming package should cooperate with the operating system's accessibility signals rather than override them, and this one maps onto the four that matter. `prefers-color-scheme` drives System, as described above. `color-scheme` is set per mode so native controls follow. `prefers-contrast: more` raises the deriver's text floors so text and links gain contrast in every mode; it ships in the static `theme.css` and is applied by the tuner as well, and it only ever raises a floor, so the result stays AA. And `forced-colors: active`, the Windows High Contrast case that replaces author colors with a user's chosen system palette, is handled by stepping aside: `theme.css` yields to the system colors under that media query rather than fighting them, while keeping the redundant text encoding (link underlines and status letter marks) on, since forced-colors does not restore color as a carrier of meaning. A deeper forced-colors treatment is a place the system could go further; it is named here rather than hidden.
 
 ## 6. The Parametric Deriver (Version 2)
 
@@ -426,19 +433,19 @@ The vision primitive addresses a single rule: color must never be the only thing
 
 ### Primary: Redundant Text Encoding
 
-Set `data-vision` on the root element to any value other than `default` (`rg`, `by`, or `mono`) and `theme.css` turns on a redundant, non-color channel with no JavaScript. Links gain an underline, so a link is identifiable without relying on its color against the surrounding text. Status indicators reveal a text mark. This channel is the one that survives everything: it reads the same to every kind of color vision, on a monochrome display, in print, and to a screen reader, none of which the hue can reach.
+The redundant, non-color channel is on by default, with no JavaScript. `theme.css` gives links an underline, so a link is identifiable without relying on its color against the surrounding text, and status indicators reveal a text mark. Nothing has to be switched on, so a build that never wires a vision control still carries the guard. A site with a specific reason to drop it opts out explicitly with `data-vision="color-only"` on the root, and a nav or toolbar whose links are already distinguished by layout can drop just the underline with `data-underline="none"` on its container. This channel is the one that survives everything: it reads the same to every kind of color vision, on a monochrome display, in print, and to a screen reader, none of which the hue can reach.
 
 The reason text leads is that hue remapping only ever helps the specific deficiency it targets, while a letter or a word helps everyone. So the system makes the redundant channel a property of the stylesheet rather than a thing each site remembers to add.
 
 It is worth scoping this carefully, because the surrounding field is littered with tools that overclaim. Deficiency simulations are approximations, perception varies within a single deficiency type, and no generated palette makes hue-coded information safe on its own. The palette work in this primitive makes color more robust to a deficiency; it does not remove WCAG 1.4.1's requirement that meaning be encoded redundantly in text or shape, and it is not a substitute for it. That requirement is exactly why the text layer is primary and the palette layer is secondary here, rather than the other way around.
 
-This rests on a component contract, which any adopting component must honor: any meaning a component encodes in color, it must also expose as text or a glyph, and the vision setting makes that redundant channel visible. For a status indicator that is otherwise icon-only, the contract is concrete. Give the element the `status-dot` class and a `data-letter` attribute:
+This rests on a component contract, which any adopting component must honor: any meaning a component encodes in color, it must also expose as text or a glyph, and the redundant channel makes that visible by default. For a status indicator that is otherwise icon-only, the contract is concrete. Give the element the `status-dot` class and a `data-letter` attribute:
 
 ```html
 <span class="status-dot" data-letter="H" style="background: var(--color-success)"></span> Healthy
 ```
 
-Under any non-default vision, `theme.css` renders the letter beside the dot. A badge that already spells out its status in words needs nothing more, because the word is the text channel; the contract only bites where color would otherwise stand alone. The demo shows both cases.
+By default, `theme.css` renders the letter beside the dot. A badge that already spells out its status in words needs nothing more, because the word is the text channel; the contract only bites where color would otherwise stand alone. The demo shows both cases.
 
 ### Secondary: Confusion-safe Palette Constraints
 
@@ -471,7 +478,7 @@ The package was checked before release:
 - `node scripts/verify-derive.mjs` derives all 288 positions and reports every floor met on every surface, every color-vision distinguishability threshold cleared, the APCA perceptual readout per mode, and the brand fidelity per family.
 - `node scripts/build-tokens.mjs` regenerates `tokens.json` from the same deriver output, and it parses as valid JSON.
 - `node scripts/build-demo-bundle.mjs` regenerates `tuner.bundle.js` from the two modules.
-- `theme.css` yields under `@media (forced-colors: active)` and the deriver raises its floors under `prefers-contrast: more` (wired through the tuner), so the package cooperates with the OS accessibility signals rather than fighting them.
+- `theme.css` yields under `@media (forced-colors: active)` and raises its text floors under `@media (prefers-contrast: more)` on the static baseline, with the tuner applying the same raise, so the package cooperates with the OS accessibility signals rather than fighting them.
 - `demo.html` references only `./theme.css`, `./tuner.bundle.js`, and inline JavaScript, with no external fonts, scripts, or network requests, and works when opened as a local file.
 
 ## License

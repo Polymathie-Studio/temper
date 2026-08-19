@@ -44,8 +44,8 @@ export const CONFIG = {
   // hues move onto an axis the deficiency preserves, and the three statuses
   // take staggered contrast targets so they separate by luminance alone. This
   // is the secondary guard; the primary guard is redundant text (link
-  // underlines and status letter marks) that theme.css activates on any
-  // non-default data-vision value.
+  // underlines and status letter marks) that theme.css applies by default, with
+  // data-vision="color-only" the explicit opt-out.
   visions: [
     { key: 'default', label: 'D', title: 'Default vision' },
     { key: 'rg', label: 'RG', title: 'Red-green safe (deutan and protan)' },

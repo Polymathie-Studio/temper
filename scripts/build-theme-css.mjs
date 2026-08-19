@@ -12,14 +12,14 @@ import { CONFIG, deriveByKey } from '../derive.js';
 const MIDDLE = 1;
 const FAMILY = 'iron';
 
-function palette(modeKey, indent) {
-  const t = deriveByKey(modeKey, MIDDLE, FAMILY, 'default');
+function palette(modeKey, indent, opts = {}) {
+  const t = deriveByKey(modeKey, MIDDLE, FAMILY, 'default', opts);
   return CONFIG.cssOrder.map((k) => `${indent}${k}: ${t[k]};`).join('\n');
 }
 
 const header = `/*
  * TEMPER - a five-mode semantic color system (a well-tempered palette)
- * License: MIT
+ * License: Apache-2.0
  *
  * GENERATED FILE. The four palettes below are emitted from derive.js at the
  * middle notch, Iron family, default vision, by scripts/build-theme-css.mjs, so
@@ -120,30 +120,46 @@ const tail = `
 }
 
 /*
- * Vision: redundant text encoding (the primary color-vision guard).
+ * Vision: redundant text encoding (the primary color-vision guard), ON BY
+ * DEFAULT.
  *
- * Meaning is never carried by color alone. Set data-vision on the root to any
- * non-default value ("rg", "by", or "mono") and this block makes the redundant
- * channel visible: links gain an underline, and status dots reveal a text mark.
- * The palette also shifts to confusion-safe status hues with staggered
- * luminance, but that is the secondary guard; this is the primary one, because
- * text survives every deficiency, monochrome output, and a screen reader.
+ * Meaning is never carried by color alone. Links carry an underline and status
+ * dots reveal a text mark with no attribute set, so a build that never wires a
+ * vision control, and a reader who never finds one, still get the guard. This is
+ * an accommodation by default, not an option to be discovered. Text survives
+ * every deficiency, monochrome output, and a screen reader, which is why this is
+ * the primary guard; the palette's confusion-safe status hues are the secondary
+ * one and are selected per data-vision by the tuner.
+ *
+ * A site with a specific reason to drop the redundant channel opts out
+ * explicitly with data-vision="color-only" on the root. Opting out is a
+ * deliberate act, which is the correct polarity.
  *
  * Component contract: any meaning a component encodes in color it must also
  * expose as text or a glyph. For a status indicator, give the element the
  * "status-dot" class and a "data-letter" attribute (for example data-letter="S"
- * for success). The rule below renders that letter beside the dot under any
- * non-default vision. This works with zero JavaScript: set data-vision in your
- * HTML and the encoding is on.
+ * for success), and the letter renders beside the dot.
  */
-[data-vision]:not([data-vision="default"]) a {
+a {
   text-decoration: underline;
 }
+[data-vision="color-only"] a {
+  text-decoration: none;
+}
+/*
+ * Scoped opt-out for chrome. A nav, toolbar, or footer whose links are already
+ * distinguished by layout can drop the underline by setting data-underline="none"
+ * on the container, without weakening the content default and without reaching
+ * for the global color-only opt-out. Opting out stays a deliberate, local act.
+ */
+[data-underline="none"] a {
+  text-decoration: none;
+}
 
-[data-vision]:not([data-vision="default"]) .status-dot {
+.status-dot {
   position: relative;
 }
-[data-vision]:not([data-vision="default"]) .status-dot::after {
+.status-dot::after {
   content: attr(data-letter);
   position: absolute;
   left: 100%;
@@ -154,6 +170,9 @@ const tail = `
   font-size: 0.7em;
   line-height: 1;
   color: var(--color-text-secondary);
+}
+[data-vision="color-only"] .status-dot::after {
+  content: none;
 }
 
 /*
@@ -180,6 +199,51 @@ const tail = `
 }
 `;
 
-writeFileSync(new URL('../theme.css', import.meta.url), header + tail);
+// prefers-contrast: more. Raised-contrast palettes emitted from the deriver's
+// highContrast targets, so the static baseline honors an OS "increase contrast"
+// preference with zero JavaScript, not only through the tuner. Structure mirrors
+// the base blocks: :root carries the light palette (also System in a light OS),
+// and a combined media query re-solves System to Dark for a dark-preference OS.
+// Later in source than the base blocks, so it wins only when both match.
+const highContrast = `
+/*
+ * prefers-contrast: more - raised-contrast palettes.
+ *
+ * Every value only raises contrast: text and links spend more of the budget and
+ * lift their floors, so the result stays WCAG AA and usually reaches AAA. The
+ * mode does not shift; only contrast rises. This makes the accommodation a
+ * default driven by the platform signal rather than an option behind the tuner.
+ */
+@media (prefers-contrast: more) {
+  :root {
+${palette('light', '    ', { highContrast: true })}
+  }
+
+  [data-theme="light"] {
+${palette('light', '    ', { highContrast: true })}
+  }
+
+  [data-theme="soft-light"] {
+${palette('soft-light', '    ', { highContrast: true })}
+  }
+
+  [data-theme="soft-dark"] {
+${palette('soft-dark', '    ', { highContrast: true })}
+  }
+
+  [data-theme="dark"] {
+${palette('dark', '    ', { highContrast: true })}
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme]),
+  [data-theme="system"] {
+${palette('dark', '    ', { highContrast: true })}
+  }
+}
+`;
+
+writeFileSync(new URL('../theme.css', import.meta.url), header + tail + highContrast);
 console.log('Wrote theme.css from derive.js (middle notch, Iron family). Soft Light base:',
   deriveByKey('soft-light', MIDDLE, FAMILY, 'default')['--color-bg-base']);
