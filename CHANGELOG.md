@@ -11,6 +11,7 @@ All notable changes to TEMPER are recorded here. This project has not yet cut a 
 
 ### Added
 
+- A non-color design-token layer in the shared `:root`: a spacing scale (`--space-1` through `--space-16`, 4px base), a type scale (`--text-xs` through `--text-4xl`, in rem, 16px body floor), font weights (`--font-weight-normal` through `--font-weight-bold`), and line heights (`--leading-tight`, `--leading-normal`, `--leading-relaxed`). Fixed scales, so sizes, weights, and gaps reference one canonical set instead of drifting, with names aligned to the common step scale. This makes TEMPER a design-token system, not only a color system.
 - `data-vision="color-only"` on the root: an explicit opt-out that drops the redundant text encoding where a site has a specific reason to.
 - `data-underline="none"` on a container: a scoped opt-out for chrome (a nav, toolbar, or footer whose links are already distinguished by layout) that drops the underline there without weakening the content default.
 - A `prefers-contrast: more` block in the static `theme.css`, carrying raised-contrast palettes for every mode. An operating-system "increase contrast" preference is now honored on the static baseline with no JavaScript, not only through the tuner. Every value only raises contrast, so the result stays within the contrast floors.

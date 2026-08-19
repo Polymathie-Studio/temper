@@ -481,6 +481,17 @@ The package was checked before release:
 - `theme.css` yields under `@media (forced-colors: active)` and raises its text floors under `@media (prefers-contrast: more)` on the static baseline, with the tuner applying the same raise, so the package cooperates with the OS accessibility signals rather than fighting them.
 - `demo.html` references only `./theme.css`, `./tuner.bundle.js`, and inline JavaScript, with no external fonts, scripts, or network requests, and works when opened as a local file.
 
+## Design tokens beyond color
+
+TEMPER is a design-token system, not only a palette. Alongside the color tokens it ships fixed, mode-independent scales in the same `:root`, so a build references one canonical set instead of hand-picking values that drift apart across components.
+
+- Spacing: `--space-1` through `--space-16`, a 4px base where `--space-4` is 16px. The names align to the common step scale, so a build maps them to what it already reaches for.
+- Type: `--text-xs` through `--text-4xl`, in rem so they respect the reader's font size, with `--text-base` at 16px as the body floor.
+- Weight: `--font-weight-normal`, `--font-weight-medium`, `--font-weight-semibold`, `--font-weight-bold`, so a heading is a named weight rather than a guessed one.
+- Line height: `--leading-tight`, `--leading-normal`, `--leading-relaxed`, with `--leading-normal` at 1.5 for readable body text.
+
+These are fixed rather than solved. Color is derived because contrast must be solved against the background; spacing and type do not need solving, they need one reference, and a fixed scale is what stops gap-drift and weight-mismatch.
+
 ## Part of the Polymathie family
 
 TEMPER is one of the [Polymathie](https://github.com/Polymathie-Studio) primitives: small, dependency-free pieces for building websites, dashboards, and tools, where each protects one posture that fast, AI-assisted building tends to drop. Its siblings are [LUCID](https://github.com/Polymathie-Studio/lucid) (honest disclosure) and [HASP](https://github.com/Polymathie-Studio/hasp) (bring-your-own-key privacy), with more of the invisible-correctness layer in progress. Adopt one and the others compose with it.
