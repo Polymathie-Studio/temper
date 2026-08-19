@@ -481,6 +481,10 @@ The package was checked before release:
 - `theme.css` yields under `@media (forced-colors: active)` and raises its text floors under `@media (prefers-contrast: more)` on the static baseline, with the tuner applying the same raise, so the package cooperates with the OS accessibility signals rather than fighting them.
 - `demo.html` references only `./theme.css`, `./tuner.bundle.js`, and inline JavaScript, with no external fonts, scripts, or network requests, and works when opened as a local file.
 
+## Part of the Polymathie family
+
+TEMPER is one of the [Polymathie](https://github.com/Polymathie-Studio) primitives: small, dependency-free pieces for building websites, dashboards, and tools, where each protects one posture that fast, AI-assisted building tends to drop. Its siblings are [LUCID](https://github.com/Polymathie-Studio/lucid) (honest disclosure) and [HASP](https://github.com/Polymathie-Studio/hasp) (bring-your-own-key privacy), with more of the invisible-correctness layer in progress. Adopt one and the others compose with it.
+
 ## License
 
 Apache-2.0 for the code, with a NOTICE file per its convention. The verification fixtures (test vectors, when published as standalone files) are CC0 so that ports in any language can embed them without ceremony. The TEMPER name is not granted by the code license; the code is free to use, the name identifies this project.
