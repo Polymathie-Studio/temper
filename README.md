@@ -492,9 +492,18 @@ TEMPER is a design-token system, not only a palette. Alongside the color tokens 
 
 These are fixed rather than solved. Color is derived because contrast must be solved against the background; spacing and type do not need solving, they need one reference, and a fixed scale is what stops gap-drift and weight-mismatch.
 
-## Part of the Polymathie family
+## Part of DS4AI, the Design Suite for AI
 
-TEMPER is one of the [Polymathie](https://github.com/Polymathie-Studio) primitives: small, dependency-free pieces for building websites, dashboards, and tools, where each protects one posture that fast, AI-assisted building tends to drop. Its siblings are [LUCID](https://github.com/Polymathie-Studio/lucid) (honest disclosure) and [HASP](https://github.com/Polymathie-Studio/hasp) (bring-your-own-key privacy), with more of the invisible-correctness layer in progress. Adopt one and the others compose with it.
+TEMPER is one instrument in **DS4AI, the Design Suite for AI, from [Polymathie-Studio](https://github.com/Polymathie-Studio)**: small, dependency-free pieces that each close one axis of the *invisible-correctness layer*, the part of a shipped surface a look-at-it review cannot see and that fast, AI-assisted building drops.
+
+- **[TEMPER](https://github.com/Polymathie-Studio/temper)**: perceivable, color and design tokens
+- **[GRASP](https://github.com/Polymathie-Studio/grasp)**: operable, interaction components
+- **[LUCID](https://github.com/Polymathie-Studio/lucid)** + **[GRACE](https://github.com/Polymathie-Studio/grace)**: honest off the happy path, disclosure and state components
+- **[HASP](https://github.com/Polymathie-Studio/hasp)**: key privacy, bring-your-own-key
+- **[BEACON](https://github.com/Polymathie-Studio/beacon)**: findable, head metadata and site files
+- **[FLEET](https://github.com/Polymathie-Studio/fleet)**: fast and stable, delivery
+
+**[MISSING](https://github.com/Polymathie-Studio/missing)** is the standard at the center of DS4AI: it names the axes, routes each to its instrument, and ships a machine-readable manifest and a conformance auditor. Adopt one and the others compose with it.
 
 ## License
 
