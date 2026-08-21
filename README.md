@@ -499,7 +499,7 @@ TEMPER is one instrument in **DS4AI, the Design Suite for AI, from [Polymathie-S
 - **[TEMPER](https://github.com/Polymathie-Studio/temper)**: perceivable, color and design tokens
 - **[GRASP](https://github.com/Polymathie-Studio/grasp)**: operable, interaction components
 - **[LUCID](https://github.com/Polymathie-Studio/lucid)** + **[GRACE](https://github.com/Polymathie-Studio/grace)**: honest off the happy path, disclosure and state components
-- **[HASP](https://github.com/Polymathie-Studio/hasp)**: key privacy, bring-your-own-key
+- **[HASP](https://github.com/Polymathie-Studio/hasp)**: hardened, client-surface security posture
 - **[BEACON](https://github.com/Polymathie-Studio/beacon)**: findable, head metadata and site files
 - **[FLEET](https://github.com/Polymathie-Studio/fleet)**: fast and stable, delivery
 
